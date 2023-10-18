@@ -238,7 +238,7 @@ impl Image {
                 if chunk_offsets.len() != chunk_bytes.len()
                     || rows_per_strip == 0
                     || u32::try_from(chunk_offsets.len())?
-                        != (height.saturating_sub(1) / rows_per_strip + 1) * planes as u32
+                    != (height.saturating_sub(1) / rows_per_strip + 1) * planes as u32
                 {
                     return Err(TiffError::FormatError(
                         TiffFormatError::InconsistentSizesEncountered,
@@ -278,7 +278,7 @@ impl Image {
                 let tile = tile_attributes.as_ref().unwrap();
                 if chunk_offsets.len() != chunk_bytes.len()
                     || chunk_offsets.len()
-                        != tile.tiles_down() * tile.tiles_across() * planes as usize
+                    != tile.tiles_down() * tile.tiles_across() * planes as usize
                 {
                     return Err(TiffError::FormatError(
                         TiffFormatError::InconsistentSizesEncountered,
@@ -288,7 +288,7 @@ impl Image {
             (_, _, _, _) => {
                 return Err(TiffError::FormatError(
                     TiffFormatError::StripTileTagConflict,
-                ))
+                ));
             }
         };
 
@@ -348,11 +348,8 @@ impl Image {
                 )),
             },
             PhotometricInterpretation::BlackIsZero | PhotometricInterpretation::WhiteIsZero
-                if self.samples == 1 =>
-            {
-                Ok(ColorType::Gray(self.bits_per_sample))
-            }
-
+            => Ok(ColorType::Gray(self.bits_per_sample)),
+            
             // TODO: this is bad we should not fail at this point
             _ => Err(TiffError::UnsupportedError(
                 TiffUnsupportedError::InterpretationWithBits(
@@ -446,7 +443,7 @@ impl Image {
             method => {
                 return Err(TiffError::UnsupportedError(
                     TiffUnsupportedError::UnsupportedCompressionMethod(method),
-                ))
+                ));
             }
         })
     }
@@ -556,13 +553,13 @@ impl Image {
             | (ColorType::CMYK(n), _)
             | (ColorType::YCbCr(n), _)
             | (ColorType::Gray(n), _)
-                if usize::from(n) == buffer.byte_len() * 8 => {}
+            if usize::from(n) == buffer.byte_len() * 8 => {}
             (ColorType::Gray(n), DecodingBuffer::U8(_)) if n < 8 => match self.predictor {
                 Predictor::None => {}
                 Predictor::Horizontal => {
                     return Err(TiffError::UnsupportedError(
                         TiffUnsupportedError::HorizontalPredictor(color_type),
-                    ))
+                    ));
                 }
                 Predictor::FloatingPoint => {
                     return Err(TiffError::UnsupportedError(
@@ -573,7 +570,7 @@ impl Image {
             (type_, _) => {
                 return Err(TiffError::UnsupportedError(
                     TiffUnsupportedError::UnsupportedColorType(type_),
-                ))
+                ));
             }
         }
 
